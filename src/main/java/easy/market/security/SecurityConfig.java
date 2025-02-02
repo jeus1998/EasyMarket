@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthenticationConfiguration configuration;
     private final ObjectMapper objectMapper;
+    private final JWTUtil jwtUtil;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)  throws Exception {
         return configuration.getAuthenticationManager();
@@ -42,7 +43,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(configuration), objectMapper),
+                .addFilterAt(new LoginFilter(authenticationManager(configuration), objectMapper, jwtUtil),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

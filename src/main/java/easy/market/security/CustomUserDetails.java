@@ -44,11 +44,15 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return getPassword();
+        return username;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
