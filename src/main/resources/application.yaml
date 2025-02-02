@@ -13,6 +13,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
         show_sql: true
+  jwt:
+    secret: vmfhaltmskdlssdstkfkdgodyroqkfwkdbalroqkfwkdbalaasadjskdjadkdjkasdajdjjd
+
 logging:
   level:
     org.hibernate.sql: debug
