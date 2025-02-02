@@ -23,7 +23,6 @@ public class JWTUtil {
                 Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-
     public String createJwt(String category, String username, String role, Long expiredMs){
         return Jwts.builder()
                 .claim("category", category)

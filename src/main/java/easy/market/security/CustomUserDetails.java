@@ -1,7 +1,6 @@
 package easy.market.security;
 
 import easy.market.entity.User;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,10 +12,10 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final String role;
 
-    public CustomUserDetails(User user) {
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.role = user.getRole();
+    public CustomUserDetails(User findUser) {
+        this.username = findUser.getUsername();
+        this.password = findUser.getPassword();
+        this.role = findUser.getRole();
     }
 
     @Override
@@ -38,7 +37,7 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role));
+        authorities.add(new SimpleGrantedAuthority(this.role));
         return authorities;
     }
 

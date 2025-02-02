@@ -35,13 +35,15 @@ public class User extends BaseTimeEntity {
         user.setUsername(joinRequest.getUsername());
         user.setPassword(joinRequest.getPassword());
         user.setNickName(UUID.randomUUID().toString());
+        user.setRole("USER");
         return user;
     }
-
+    private void setRole(String role) {
+        this.role = role;
+    }
     private void setNickName(String nickname) {
         this.nickname = nickname;
     }
-
     private void setUsername(String username) {
         this.username = username;
     }

@@ -35,7 +35,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         LoginRequest loginRequest = getBody(request);
         log.info("Login request: {}", loginRequest);
         UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken
-                .unauthenticated(loginRequest.getPassword(), loginRequest.getUsername());
+                .unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
 
         return authenticationManager.authenticate(authToken);
     }
@@ -79,6 +79,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("login fail");
+        log.info(failed.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
     }
