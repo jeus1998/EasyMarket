@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("access token x")
         authButtons.innerHTML = `
                 <a href="/login" class="btn btn-outline-success me-2">로그인</a>
-                <a href="/signup" class="btn btn-outline-primary">회원가입</a>
+                <a href="/join" class="btn btn-outline-primary">회원가입</a>
             `;
     }
 });
