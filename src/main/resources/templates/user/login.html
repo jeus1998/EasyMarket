@@ -47,14 +47,16 @@
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(formData),
-        success: function(response) {
-          alert("로그인 성공!");
-          window.location.href = '/'; // 로그인 후 리디렉션할 페이지
+        success: function(response, textStatus, xhr) {
+            let accessToken = xhr.getResponseHeader('access');
+            if (accessToken) {
+                localStorage.setItem("accessToken", accessToken);
+                alert("로그인 성공!");
+                window.location.href = '/';
+            }
         },
         error: function(xhr, status, error) {
-          // 에러 응답 처리
           let errorResponse = xhr.responseJSON;
-
           if (errorResponse.message) {
               alert(errorResponse.message);
           }

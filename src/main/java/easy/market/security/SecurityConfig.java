@@ -37,9 +37,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/join").permitAll()
+                        .requestMatchers("/", "/login", "/join", "/logout", "/refresh").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .anyRequest().hasRole("USER"));
+                        .anyRequest().authenticated());
         http
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
