@@ -1,6 +1,7 @@
 package easy.market.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import easy.market.repository.RedisTokenRepository;
 import easy.market.request.LoginRequest;
 import easy.market.response.ErrorResponse;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +13,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +30,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JWTUtil jwtUtil;
+    private final RedisTokenRepository redisTokenRepository;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -61,6 +62,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 토큰 생성
         String accessToken = jwtUtil.createJwt(JWTUtil.ACCESS_TOKEN, username, role, 600000L);
         String refreshToken = jwtUtil.createJwt(JWTUtil.REFRESH_TOKEN, username, role, 86400000L);
+
+        // save RefreshToken(redis)
+        redisTokenRepository.saveRefreshToken(username, refreshToken);
 
         // 응답 설정
         response.setHeader(JWTUtil.ACCESS_TOKEN, accessToken);
