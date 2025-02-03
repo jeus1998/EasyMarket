@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import easy.market.response.ErrorResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,33 +35,25 @@ public class JWTFilter extends OncePerRequestFilter {
               filterChain.doFilter(request, response);
               return;
           }
+
           Claims payload = null;
           try {
               payload = jwtUtil.getPayload(accessToken, JWTUtil.ACCESS_TOKEN);
           }
           catch (ExpiredJwtException e){
               log.error(e.getMessage());
-              response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-              ErrorResponse errorResponse = new ErrorResponse("access_expired");
-              String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-              response.setContentType("application/json");
-              response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-              response.getWriter().write(jsonResponse);
+              sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access_expired");
               return;
           }
-          catch (SignatureException e){
+          catch (SignatureException | MalformedJwtException | IllegalArgumentException e){
               log.error(e.getMessage());
-              response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-              ErrorResponse errorResponse = new ErrorResponse("invalid_signature");
-              String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-              response.setContentType("application/json");
-              response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-              response.getWriter().write(jsonResponse);
+              sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, "invalid_signature");
               return;
           }
 
           String role = jwtUtil.getRole(payload);
           String username = jwtUtil.getUsername(payload);
+
           CustomUserDetails customUserDetails = new CustomUserDetails(username, role);
           UsernamePasswordAuthenticationToken authToken =
                   UsernamePasswordAuthenticationToken.authenticated(
@@ -73,5 +66,14 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
         SecurityContextHolder.getContextHolderStrategy().clearContext();
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        ErrorResponse errorResponse = new ErrorResponse(message);
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+        response.setContentType("application/json");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getWriter().write(jsonResponse);
     }
 }
