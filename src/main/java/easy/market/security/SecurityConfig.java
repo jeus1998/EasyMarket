@@ -43,15 +43,15 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http
-                .addFilterBefore(new JWTRefreshFilter(redisTokenRepository, jwtUtil, objectMapper), JWTFilter.class);
-
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil, objectMapper), LoginFilter.class);
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager(configuration), objectMapper, jwtUtil, redisTokenRepository),
                         UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil, objectMapper), LoginFilter.class);
+
+        http
+                .addFilterBefore(new JWTRefreshFilter(redisTokenRepository, jwtUtil, objectMapper), JWTFilter.class);
 
         return http.build();
     }
