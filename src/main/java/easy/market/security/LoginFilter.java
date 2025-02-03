@@ -60,21 +60,21 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = userDetails.getUsername();
 
         // 토큰 생성
-        String accessToken = jwtUtil.createJwt(JWTUtil.ACCESS_TOKEN, username, role, 600000L);
-        String refreshToken = jwtUtil.createJwt(JWTUtil.REFRESH_TOKEN, username, role, 86400000L);
+        String accessToken = jwtUtil.createJwt(SecurityConst.ACCESS_TOKEN, username, role, SecurityConst.ACCESS_TOKEN_EXPIRED_MS);
+        String refreshToken = jwtUtil.createJwt(SecurityConst.REFRESH_TOKEN, username, role, SecurityConst.REFRESH_TOKEN_EXPIRED_MS);
 
         // save RefreshToken(redis)
         redisTokenRepository.saveRefreshToken(username, refreshToken);
 
         // 응답 설정
-        response.setHeader(JWTUtil.ACCESS_TOKEN, accessToken);
-        response.addCookie(createCookie(JWTUtil.REFRESH_TOKEN, refreshToken));
+        response.setHeader(SecurityConst.ACCESS_TOKEN, accessToken);
+        response.addCookie(createCookie(SecurityConst.REFRESH_TOKEN, refreshToken));
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private Cookie createCookie(String key, String value){
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(SecurityConst.REFRESH_TOKEN_EXPIRED_S);
         // cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);

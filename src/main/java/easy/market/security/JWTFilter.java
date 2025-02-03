@@ -38,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
           Claims payload = null;
           try {
-              payload = jwtUtil.getPayload(accessToken, JWTUtil.ACCESS_TOKEN);
+              payload = jwtUtil.getPayload(accessToken, SecurityConst.ACCESS_TOKEN);
           }
           catch (ExpiredJwtException e){
               log.error(e.getMessage());

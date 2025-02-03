@@ -13,10 +13,6 @@ import java.util.Date;
 
 @Component
 public class JWTUtil {
-
-    public static final String ACCESS_TOKEN = "access";
-    public static final String REFRESH_TOKEN = "refresh";
-
     private final SecretKey secretKey;
 
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
@@ -31,6 +27,7 @@ public class JWTUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getPayload();
+
         if(!payload.get("category", String.class).equals(category)) {
             throw new SignatureException("Invalid category");
         }

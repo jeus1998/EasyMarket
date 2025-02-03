@@ -39,7 +39,7 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
             return;
         }
         String refreshToken = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals(JWTUtil.REFRESH_TOKEN))
+                .filter(cookie -> cookie.getName().equals(SecurityConst.REFRESH_TOKEN))
                 .map(cookie -> cookie.getValue())
                 .findAny()
                 .orElse(null);
@@ -52,7 +52,7 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
         Claims payload = null;
 
         try {
-            payload = jwtUtil.getPayload(refreshToken, JWTUtil.REFRESH_TOKEN);
+            payload = jwtUtil.getPayload(refreshToken, SecurityConst.REFRESH_TOKEN);
         }
         catch (ExpiredJwtException e){
             log.error(e.getMessage());
@@ -75,8 +75,8 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
         }
 
         if(findRefreshToken.equals(refreshToken)) {
-            String accessToken = jwtUtil.createJwt(JWTUtil.ACCESS_TOKEN, username, role, 600000L);
-            response.setHeader(JWTUtil.ACCESS_TOKEN, accessToken);
+            String accessToken = jwtUtil.createJwt(SecurityConst.ACCESS_TOKEN, username, role, SecurityConst.ACCESS_TOKEN_EXPIRED_MS);
+            response.setHeader(SecurityConst.ACCESS_TOKEN, accessToken);
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
