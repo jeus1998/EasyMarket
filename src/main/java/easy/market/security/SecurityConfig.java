@@ -53,6 +53,8 @@ public class SecurityConfig {
         http
                 .addFilterBefore(new JWTRefreshFilter(redisTokenRepository, jwtUtil, objectMapper), JWTFilter.class);
 
+        http    .addFilterBefore(new JWTLogoutFilter(redisTokenRepository, jwtUtil), JWTRefreshFilter.class);
+
         return http.build();
     }
     @Bean
