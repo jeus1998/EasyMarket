@@ -1,6 +1,7 @@
 package easy.market.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import easy.market.repository.RedisTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration configuration;
     private final ObjectMapper objectMapper;
     private final JWTUtil jwtUtil;
+    private final RedisTokenRepository redisTokenRepository;
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)  throws Exception {
         return configuration.getAuthenticationManager();
@@ -41,12 +43,14 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
+                .addFilterBefore(new JWTRefreshFilter(redisTokenRepository, jwtUtil, objectMapper), JWTFilter.class);
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, objectMapper), LoginFilter.class);
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(configuration), objectMapper, jwtUtil),
+                .addFilterAt(new LoginFilter(authenticationManager(configuration), objectMapper, jwtUtil, redisTokenRepository),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
