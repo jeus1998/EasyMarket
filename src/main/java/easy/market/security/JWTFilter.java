@@ -29,13 +29,10 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
           String accessToken = request.getHeader("access");
-
           if(!StringUtils.hasText(accessToken)) {
-              log.info("Access token is empty");
               filterChain.doFilter(request, response);
               return;
           }
-
           Claims payload = null;
           try {
               payload = jwtUtil.getPayload(accessToken, SecurityConst.ACCESS_TOKEN);

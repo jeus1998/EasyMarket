@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import easy.market.repository.RedisTokenRepository;
 import easy.market.request.LoginRequest;
 import easy.market.response.ErrorResponse;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
@@ -35,7 +34,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         LoginRequest loginRequest = getBody(request);
-        log.info("Login request: {}", loginRequest);
         UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken
                 .unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
 
@@ -54,7 +52,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        log.info("login success");
         CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
         String role = userDetails.getRole();
         String username = userDetails.getUsername();
@@ -76,14 +73,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(SecurityConst.REFRESH_TOKEN_EXPIRED_S);
         // cookie.setSecure(true);
-        cookie.setPath("/");
+        // cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        log.info("login fail");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ErrorResponse errorResponse = new ErrorResponse(failed.getMessage());
         String jsonResponse = objectMapper.writeValueAsString(errorResponse);

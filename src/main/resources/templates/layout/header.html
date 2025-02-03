@@ -1,12 +1,30 @@
 <header th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="/">Easy Market</a>
+            <a class="navbar-brand text-white fw-bold" href="/">Easy Market</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto" id="auth-buttons">
+                    <!-- 로그인 버튼 -->
+                    <li class="nav-item auth-btn hidden" id="login-btn">
+                        <a class="btn btn-outline-light me-2" href="/login">로그인</a>
+                    </li>
+                    <!-- 회원가입 버튼 -->
+                    <li class="nav-item auth-btn hidden" id="join-btn">
+                        <a class="btn btn-outline-light me-2" href="/join">회원가입</a>
+                    </li>
+
+                    <!-- 프로필 버튼 -->
+                    <li class="nav-item auth-btn hidden" id="profile-link">
+                        <a class="btn btn-outline-light me-2" href="/profile">프로필</a>
+                    </li>
+                    <!-- 로그아웃 버튼 -->
+                    <li class="nav-item auth-btn hidden" id="logout-btn">
+                        <button class="btn btn-outline-light" id="logout-button-action">로그아웃</button>
+                    </li>
                 </ul>
             </div>
         </div>

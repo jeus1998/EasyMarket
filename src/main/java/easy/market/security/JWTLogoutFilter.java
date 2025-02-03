@@ -27,13 +27,16 @@ public class JWTLogoutFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("logout request={}", request.getRequestURI());
+        log.info("request={}", request.getRequestURI());
         // 로그아웃  경로가 아니라면 다음 필터로
         if(!requestMatcher.matches(request)) {
-            log.info("request not match");
             filterChain.doFilter(request, response);
             return;
         }
+        if(request.getCookies() == null){
+            return;
+        }
+
         String refreshToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(SecurityConst.REFRESH_TOKEN))
                 .map(cookie -> cookie.getValue())
@@ -46,7 +49,6 @@ public class JWTLogoutFilter extends OncePerRequestFilter {
 
         deleteCookie(response);
 
-        log.info("Refresh token: {}", refreshToken);
         Claims payload = null;
         try {
             payload = jwtUtil.getPayload(refreshToken, SecurityConst.REFRESH_TOKEN);
@@ -56,7 +58,7 @@ public class JWTLogoutFilter extends OncePerRequestFilter {
             return;
         }
         String username = jwtUtil.getUsername(payload);
-        log.info("username: {}", username);
+
         redisTokenRepository.removeRefreshToken(username);
     }
     private void deleteCookie(HttpServletResponse response){

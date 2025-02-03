@@ -40,6 +40,11 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/join", "/logout", "/refresh").permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .anyRequest().authenticated());
+
+        http
+                .logout(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable);
+
         http
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));

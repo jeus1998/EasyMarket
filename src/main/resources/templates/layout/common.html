@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="common-head(title)">
+  <meta charset="UTF-8">
+  <title th:text="${title} ?: 'Easy Market'">Easy Market</title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body th:fragment="common-scripts">
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/header.js"></script>
+</body>
+</html>
