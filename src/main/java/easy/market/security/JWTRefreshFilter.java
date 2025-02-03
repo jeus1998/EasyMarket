@@ -9,7 +9,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +37,12 @@ public class JWTRefreshFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        if(request.getCookies() == null){
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "No refresh token found");
+            return;
+        }
+
         String refreshToken = Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(SecurityConst.REFRESH_TOKEN))
                 .map(cookie -> cookie.getValue())

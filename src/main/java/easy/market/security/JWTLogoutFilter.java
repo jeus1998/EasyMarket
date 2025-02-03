@@ -27,12 +27,12 @@ public class JWTLogoutFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("request={}", request.getRequestURI());
         // 로그아웃  경로가 아니라면 다음 필터로
         if(!requestMatcher.matches(request)) {
             filterChain.doFilter(request, response);
             return;
         }
+
         if(request.getCookies() == null){
             return;
         }
