@@ -1,6 +1,7 @@
 package easy.market.security;
 
 import easy.market.entity.User;
+import jakarta.annotation.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,9 +10,14 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
     private final String username;
+    @Nullable
     private final String password;
     private final String role;
-
+    public CustomUserDetails(String username, String role) {
+        this.username = username;
+        this.role = role;
+        this.password = null;
+    }
     public CustomUserDetails(User findUser) {
         this.username = findUser.getUsername();
         this.password = findUser.getPassword();

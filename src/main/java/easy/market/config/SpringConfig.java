@@ -5,8 +5,8 @@ import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
-import java.util.UUID;
 
 @Configuration
 public class SpringConfig {
@@ -16,9 +16,9 @@ public class SpringConfig {
         return new JPAQueryFactory(em);
     }
 
-    // todo: spring security 추가
     @Bean
     public AuditorAware<String> auditorProvider() {
-        return () -> Optional.of(UUID.randomUUID().toString());
+        return () -> Optional.of(SecurityContextHolder.getContextHolderStrategy()
+                .getContext().getAuthentication().getName());
     }
 }

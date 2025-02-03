@@ -2,6 +2,7 @@ package easy.market.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import easy.market.request.LoginRequest;
+import easy.market.response.ErrorResponse;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -70,7 +71,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value){
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
-        cookie.setSecure(true);
+        // cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         return cookie;
@@ -79,8 +80,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("login fail");
-        log.info(failed.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ErrorResponse errorResponse = new ErrorResponse(failed.getMessage());
+        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
         response.setContentType("application/json");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getWriter().write(jsonResponse);
     }
 }
