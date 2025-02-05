@@ -26,8 +26,10 @@ public class User extends BaseTimeEntity {
 
     private String role;
 
-    public User(String username) {
+    public User(String username, String password, String nickname) {
         this.username = username;
+        this.password = password;
+        this.nickname = nickname;
     }
 
     public static User joinUser(JoinRequest joinRequest){

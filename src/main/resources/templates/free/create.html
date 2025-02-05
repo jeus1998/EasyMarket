@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/common::common-head(title='자유 게시판 작성')}"></head>
+<body>
+<!-- 헤더 포함 -->
+<div th:replace="~{layout/header::header}"></div>
+
+<div class="container editor-container">
+    <!-- 게시글 작성 폼 -->
+    <form id="postForm" onsubmit="submitForm(event)">
+        <!-- 제목 입력 -->
+        <div>
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" class="form-control" required placeholder="제목을 입력하세요">
+        </div>
+
+        <!-- 에디터(내용 작성) -->
+        <div>
+            <label for="content">내용</label>
+            <div id="content" class="form-control editor" contenteditable="true" placeholder="내용을 작성하세요"></div>
+        </div>
+
+        <!-- 이미지 추가 버튼 -->
+        <div>
+            <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="insertImage(event)">
+            <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('imageInput').click()">이미지 추가</button>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <button type="submit" class="btn btn-success mt-3">작성 완료</button>
+    </form>
+</div>
+
+<!-- 하단 스크립트 및 푸터 포함 -->
+<div th:replace="~{layout/common::common-scripts}"></div>
+<div th:replace="~{layout/footer::footer}"></div>
+
+<script>
+    // 이미지 삽입 함수
+    function insertImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('inserted-image');
+                document.getElementById('content').appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 폼 제출 시 데이터 전송
+    function submitForm(event) {
+        event.preventDefault(); // 폼 제출 기본 동작 방지
+
+        const postRequest = {
+            title: document.getElementById('title').value,
+            content: document.getElementById('content').innerHTML, // 내용은 HTML로 가져옴
+        };
+
+        console.log('Post data:', JSON.stringify(postRequest));
+
+        fetch('/api/free/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postRequest)
+        }).then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+
+<style>
+    .editor-container button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .editor-container button:hover {
+        background-color: #45a049;
+    }
+
+    .editor {
+        width: 100%;
+        min-height: 200px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+        font-size: 16px;
+        line-height: 1.5;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        outline: none;
+    }
+
+    .editor[contenteditable="true"]:empty:before {
+        content: attr(placeholder);
+        color: #888;
+        pointer-events: none;
+        display: block;
+    }
+
+    .inserted-image {
+        max-width: 70%;
+        margin: 10px auto;
+        display: block;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+</style>
+
+</body>
+</html>

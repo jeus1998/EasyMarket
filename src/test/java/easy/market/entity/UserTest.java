@@ -24,9 +24,8 @@ class UserTest {
     @Test
     @Commit
     public void UserSaveTest(){
-        User user = new User("jeu");
+        User user = new User("jeu", "1234", "sd");
         userRepository.save(user);
-        em.clear();
 
         User findUser = userRepository.findById(user.getId()).get();
         assertThat(user.getId()).isEqualTo(findUser.getId());

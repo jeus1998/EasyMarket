@@ -7,23 +7,18 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto" id="auth-buttons">
-                    <!-- 로그인 버튼 -->
-                    <li class="nav-item auth-btn hidden" id="login-btn">
-                        <a class="btn btn-outline-light me-2" href="/login">로그인</a>
+                <ul class="navbar-nav ms-auto d-flex flex-row align-items-center" id="auth-buttons">
+                    <li class="nav-item auth-btn" id="login-btn" style="display: none;">
+                        <a class="btn btn-outline-light btn-lg me-2 align-middle" href="/login">로그인</a>
                     </li>
-                    <!-- 회원가입 버튼 -->
-                    <li class="nav-item auth-btn hidden" id="join-btn">
-                        <a class="btn btn-outline-light me-2" href="/join">회원가입</a>
+                    <li class="nav-item auth-btn" id="join-btn" style="display: none;">
+                        <a class="btn btn-outline-light btn-lg me-2 align-middle" href="/join">회원가입</a>
                     </li>
-
-                    <!-- 프로필 버튼 -->
-                    <li class="nav-item auth-btn hidden" id="profile-link">
-                        <a class="btn btn-outline-light me-2" href="/profile">프로필</a>
+                    <li class="nav-item auth-btn" id="profile-link" style="display: none;">
+                        <a class="btn btn-outline-light btn-lg me-2 align-middle" href="/profile">프로필</a>
                     </li>
-                    <!-- 로그아웃 버튼 -->
-                    <li class="nav-item auth-btn hidden" id="logout-btn">
-                        <button class="btn btn-outline-light" id="logout-button-action">로그아웃</button>
+                    <li class="nav-item auth-btn" id="logout-btn" style="display: none;">
+                        <button class="btn btn-outline-light btn-lg align-middle" id="logout-button-action">로그아웃</button>
                     </li>
                 </ul>
             </div>

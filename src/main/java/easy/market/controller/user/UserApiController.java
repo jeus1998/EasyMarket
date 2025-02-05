@@ -1,4 +1,4 @@
-package easy.market.controller;
+package easy.market.controller.user;
 
 import easy.market.request.JoinRequest;
 import easy.market.service.UserService;

@@ -2,7 +2,6 @@ package easy.market.response;
 
 import easy.market.exception.Validation;
 import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 

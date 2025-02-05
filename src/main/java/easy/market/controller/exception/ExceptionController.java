@@ -1,4 +1,4 @@
-package easy.market.controller;
+package easy.market.controller.exception;
 
 import easy.market.exception.BusinessException;
 import easy.market.response.ErrorResponse;
