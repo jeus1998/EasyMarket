@@ -1,16 +1,20 @@
 package easy.market.request.freepost;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter @Setter
+import java.time.LocalDateTime;
+
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@ToString
 public class FreePostListDto {
-    private String postId;
+    private Long postId;
     private String title;
     private String username;
     private int likeCount;
     private int viewCount;
-    private int commentCount;
+    private long commentCount;
+    private LocalDateTime createdAt;
 }

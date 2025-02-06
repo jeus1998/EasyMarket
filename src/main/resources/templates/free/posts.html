@@ -1,11 +1,139 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout/common::common-head(title='자유 게시판')}"></head>
-<div th:replace="~{layout/header::header}"></div>
+<html lang="ko">
+<head th:replace="~{layout/common::common-head(title='자유 게시판 목록')}"></head>
 <body>
+<div th:replace="~{layout/header::header}"></div>
+<div class="container mt-4">
+    <h1>자유 게시판</h1>
 
+    <!-- 검색 조건 입력 창 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <input type="text" id="searchTitle" class="form-control" placeholder="제목 검색">
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="searchCreatedBy" class="form-control" placeholder="작성자 검색">
+        </div>
+        <div class="col-md-3">
+            <select id="sortBy" class="form-control">
+                <option value="">정렬 기준</option>
+                <option value="CREATED_DATE_ASC">등록 날짜 오름차순</option>
+                <option value="CREATED_DATE_DESC">등록 날짜 내림차순</option>
+                <option value="LIKE_COUNT_ASC">좋아요 오름차순</option>
+                <option value="LIKE_COUNT_DESC">좋아요 내림차순</option>
+                <option value="VIEW_COUNT_ASC">조회수 오름차순</option>
+                <option value="VIEW_COUNT_DESC">조회수 내림차순</option>
+            </select>
+        </div>
+        <div class="col-md-3 mt-2">
+            <button class="btn btn-primary" onclick="loadPosts()">검색</button>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">좋아요</th>
+            <th scope="col">조회수</th>
+            <th scope="col">댓글수</th>
+            <th scope="col">작성일</th>
+        </tr>
+        </thead>
+        <tbody id="postsTableBody">
+        <!-- 게시글 목록이 여기에 렌더링 됩니다 -->
+        </tbody>
+    </table>
+
+    <nav>
+        <ul class="pagination" id="pagination">
+            <!-- 페이지 네비게이션이 여기에 렌더링 됩니다 -->
+        </ul>
+    </nav>
+</div>
 
 <div th:replace="~{layout/common::common-scripts}"></div>
 <div th:replace="~{layout/footer::footer}"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        loadPosts();
+    });
+
+    function loadPosts(page = 0) {
+        const searchTitle = document.getElementById('searchTitle').value;
+        const searchCreatedBy = document.getElementById('searchCreatedBy').value;
+        const sortBy = document.getElementById('sortBy').value;
+        const size = 10;
+
+        const queryParams = new URLSearchParams({
+            page: page,
+            size: size,
+            title: searchTitle || '',
+            createdBy: searchCreatedBy || '',
+            sortBy: sortBy || ''
+        });
+
+        fetch(`/api/free/posts?${queryParams.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                renderPosts(data.content);
+                renderPagination(data);
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function renderPosts(posts) {
+        const postsTableBody = document.getElementById('postsTableBody');
+        postsTableBody.innerHTML = '';
+        posts.forEach((post, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <th scope="row">${index + 1}</th>
+                <td>${post.title}</td>
+                <td>${post.username}</td>
+                <td>${post.likeCount}</td>
+                <td>${post.viewCount}</td>
+                <td>${post.commentCount}</td>
+                <td>${post.createdDate}</td>
+            `;
+            postsTableBody.appendChild(row);
+        });
+    }
+
+    function renderPagination(pageData) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+
+        if (pageData.totalPages > 1) {
+            if (!pageData.first) {
+                pagination.innerHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:loadPosts(${pageData.number - 1})" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>`;
+            }
+
+            for (let i = 0; i < pageData.totalPages; i++) {
+                pagination.innerHTML += `
+                    <li class="page-item ${pageData.number === i ? 'active' : ''}">
+                        <a class="page-link" href="javascript:loadPosts(${i})">${i + 1}</a>
+                    </li>`;
+            }
+
+            if (!pageData.last) {
+                pagination.innerHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:loadPosts(${pageData.number + 1})" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>`;
+            }
+        }
+    }
+</script>
 </body>
 </html>
