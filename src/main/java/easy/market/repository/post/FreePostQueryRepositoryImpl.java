@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static easy.market.entity.QComment.*;
+import static easy.market.entity.QPostComment.*;
 import static easy.market.entity.QPost.*;
 import static easy.market.entity.QUser.*;
 
@@ -31,11 +31,11 @@ public class FreePostQueryRepositoryImpl implements FreePostQueryRepository {
                         post.title,
                         user.username,
                         post.likeCount,
-                        comment.count()
+                        postComment.count()
                 ))
                 .from(post)
                 .join(post.user, user)
-                .leftJoin(comment.post, post)
+                .leftJoin(postComment.post, post)
                 .where(
                         writerNameEq(con.getCreatedBy()),
                         titleLike(con.getTitle())

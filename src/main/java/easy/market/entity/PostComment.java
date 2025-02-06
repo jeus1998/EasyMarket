@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class PostComment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long id;
@@ -22,8 +22,8 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
-    private Comment parentComment;
+    private PostComment parentComment;
 
     @OneToMany(mappedBy = "parentComment")
-    private List<Comment> replies = new ArrayList<>();
+    private List<PostComment> replies = new ArrayList<>();
 }
