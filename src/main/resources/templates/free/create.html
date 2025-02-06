@@ -14,16 +14,18 @@
             <input type="text" id="title" name="title" class="form-control" required placeholder="제목을 입력하세요">
         </div>
 
-        <!-- 에디터(내용 작성) -->
+        <!-- 내용 입력 -->
         <div>
             <label for="content">내용</label>
-            <div id="content" class="form-control editor" contenteditable="true" placeholder="내용을 작성하세요"></div>
+            <textarea id="content" name="content" class="form-control" required placeholder="내용을 입력하세요"></textarea>
         </div>
 
         <!-- 이미지 추가 버튼 -->
         <div>
-            <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="insertImage(event)">
+            <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="insertImages(event)">
             <button type="button" class="btn btn-outline-primary mt-2" onclick="document.getElementById('imageInput').click()">이미지 추가</button>
+            <div id="imageContainer" class="image-grid"></div>
+            <div id="warningMessage" class="warning-message" style="display:none;">이미지는 최대 3개까지만 추가할 수 있습니다.</div>
         </div>
 
         <!-- 제출 버튼 -->
@@ -37,17 +39,46 @@
 
 <script>
     // 이미지 삽입 함수
-    function insertImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('inserted-image');
-                document.getElementById('content').appendChild(img);
-            };
-            reader.readAsDataURL(file);
+    function insertImages(event) {
+        const files = event.target.files;
+        const imageContainer = document.getElementById('imageContainer');
+        const warningMessage = document.getElementById('warningMessage');
+
+        // 현재 이미지 개수 확인
+        const currentImageCount = imageContainer.childElementCount;
+
+        if (currentImageCount + files.length > 3) {
+            warningMessage.style.display = 'block';
+        } else {
+            warningMessage.style.display = 'none';
+            Array.from(files).slice(0, 3 - currentImageCount).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.classList.add('image-preview');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('inserted-image');
+
+                    const fileName = document.createElement('div');
+                    fileName.classList.add('image-filename');
+                    fileName.innerText = file.name;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerText = '삭제';
+                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'remove-btn');
+                    removeBtn.onclick = function () {
+                        imgDiv.remove();
+                    };
+
+                    imgDiv.appendChild(img);
+                    imgDiv.appendChild(fileName);
+                    imgDiv.appendChild(removeBtn);
+                    imageContainer.appendChild(imgDiv);
+                };
+                reader.readAsDataURL(file);
+            });
         }
     }
 
@@ -57,7 +88,8 @@
 
         const postRequest = {
             title: document.getElementById('title').value,
-            content: document.getElementById('content').innerHTML, // 내용은 HTML로 가져옴
+            content: document.getElementById('content').value, // 내용은 텍스트로 가져옴
+            images: Array.from(document.querySelectorAll('.image-preview img')).map(img => img.src)
         };
 
         console.log('Post data:', JSON.stringify(postRequest));
@@ -89,33 +121,53 @@
         background-color: #45a049;
     }
 
-    .editor {
+    .form-control {
         width: 100%;
-        min-height: 200px;
-        border: 1px solid #ccc;
         padding: 10px;
-        background-color: #f9f9f9;
-        font-size: 16px;
-        line-height: 1.5;
+        margin: 5px 0;
+        border: 1px solid #ccc;
         border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-        outline: none;
+        box-sizing: border-box;
     }
 
-    .editor[contenteditable="true"]:empty:before {
-        content: attr(placeholder);
-        color: #888;
-        pointer-events: none;
-        display: block;
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
     }
 
     .inserted-image {
-        max-width: 70%;
-        margin: 10px auto;
+        width: 100%;
+        height: auto;
         display: block;
         border: 1px solid #ddd;
         border-radius: 5px;
+    }
+
+    .image-preview {
+        position: relative;
+        padding: 10px;
+        border: 2px solid blue;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .image-filename {
+        font-size: 12px;
+        color: #555;
+    }
+
+    .remove-btn {
+        margin-top: 5px;
+    }
+
+    .warning-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 10px;
     }
 
     input[type="file"] {
