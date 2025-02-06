@@ -5,7 +5,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import easy.market.entity.PostComment;
 import easy.market.request.freepost.FreePostListDto;
 import easy.market.request.freepost.FreePostSearch;
 import easy.market.request.freepost.SortBy;
@@ -50,11 +49,13 @@ public class FreePostQueryRepositoryImpl implements FreePostQueryRepository {
                         writerNameEq(con.getCreatedBy()),
                         titleLike(con.getTitle())
                 )
-                .groupBy(post.id, post.title, user.username, post.likeCount)
+                .groupBy(post)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(getOrderBy(con.getSortBy()))
                 .fetch();
+
+        log.info("content={}", content);
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(post.count())
@@ -94,6 +95,6 @@ public class FreePostQueryRepositoryImpl implements FreePostQueryRepository {
 
     private BooleanExpression titleLike(String title) {
         if(!StringUtils.hasText(title)) return null;
-        return user.username.like("%"+title+"%");
+        return post.title.like("%"+title+"%");
     }
 }

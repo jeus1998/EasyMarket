@@ -97,7 +97,7 @@
                 <td>${post.likeCount}</td>
                 <td>${post.viewCount}</td>
                 <td>${post.commentCount}</td>
-                <td>${post.createdDate}</td>
+                <td>${new Date(post.createdAt).toLocaleString()}</td>
             `;
             postsTableBody.appendChild(row);
         });
@@ -107,27 +107,33 @@
         const pagination = document.getElementById('pagination');
         pagination.innerHTML = '';
 
-        if (pageData.totalPages > 1) {
+        const totalPages = pageData.totalPages;
+        const currentPage = pageData.number + 1; // 현재 페이지
+        const pageSize = 10;
+        const startPage = Math.floor((currentPage - 1) / pageSize) * pageSize + 1;
+        const endPage = Math.min(startPage + pageSize - 1, totalPages);
+
+        if (totalPages > 1) {
             if (!pageData.first) {
                 pagination.innerHTML += `
                     <li class="page-item">
-                        <a class="page-link" href="javascript:loadPosts(${pageData.number - 1})" aria-label="Previous">
+                        <a class="page-link" href="javascript:loadPosts(${currentPage - 2})" aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>`;
             }
 
-            for (let i = 0; i < pageData.totalPages; i++) {
+            for (let i = startPage; i <= endPage; i++) {
                 pagination.innerHTML += `
-                    <li class="page-item ${pageData.number === i ? 'active' : ''}">
-                        <a class="page-link" href="javascript:loadPosts(${i})">${i + 1}</a>
+                    <li class="page-item ${currentPage === i ? 'active' : ''}">
+                        <a class="page-link" href="javascript:loadPosts(${i - 1})">${i}</a>
                     </li>`;
             }
 
             if (!pageData.last) {
                 pagination.innerHTML += `
                     <li class="page-item">
-                        <a class="page-link" href="javascript:loadPosts(${pageData.number + 1})" aria-label="Next">
+                        <a class="page-link" href="javascript:loadPosts(${currentPage})" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>`;
