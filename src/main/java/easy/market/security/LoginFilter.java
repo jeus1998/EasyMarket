@@ -73,7 +73,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(SecurityConst.REFRESH_TOKEN_EXPIRED_S);
         // cookie.setSecure(true);
-        cookie.setPath("/refresh");
         cookie.setHttpOnly(true);
         return cookie;
     }

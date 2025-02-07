@@ -55,7 +55,7 @@
                 window.location.href = '/';
             }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr) {
           let errorResponse = xhr.responseJSON;
           if (errorResponse.message) {
               alert(errorResponse.message);
